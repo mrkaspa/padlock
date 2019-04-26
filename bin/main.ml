@@ -1,4 +1,5 @@
 open Lib
+open Core
 
 let pad_lock = [|
   [|None; Some(2); Some(3)|];
@@ -13,46 +14,59 @@ let moves = [
   (-1, 2); (-1, -2);
 ]
 
-let pos_solutions (i, j) =
-  List.fold_right (fun (im, jm) ls ->
-      let inw = i + im in
-      let jnw = j + jm in
-      if inw >= 0 && inw < 3 && jnw >= 0 && jnw < 3 then
-        match pad_lock.(inw).(jnw) with
-        | Some _ ->
-          (inw, jnw)::ls
-        | None -> ls
-      else
-        ls
-    ) moves []
+module Int_map = Map.Make (
+  struct
+    type t = int * int
+    include Tuple.Comparable (Int) (Int)
+  end
+  )
 
-let rec find_n_combinations ((i, j) as idx) depth max_depth =
+let pos_solutions ((i, j) as idx) (cache : (int * int) list Int_map.t) =
+  match Int_map.find cache idx with
+  | Some sols -> (sols, cache)
+  | None ->
+    let sols =
+      List.fold_right ~f:(fun (im, jm) ls ->
+          let inw = i + im in
+          let jnw = j + jm in
+          if inw >= 0 && inw < 3 && jnw >= 0 && jnw < 3 then
+            match pad_lock.(inw).(jnw) with
+            | Some _ ->
+              (inw, jnw)::ls
+            | None -> ls
+          else
+            ls
+        ) ~init:[] moves
+    in
+    (sols, Int_map.add_exn cache ~key:idx ~data:sols)
+
+let rec find_n_combinations ((i, j) as idx) depth max_depth (cache : (int * int) list Int_map.t) =
   if depth > max_depth then
     match pad_lock.(i).(j) with
     | Some _ -> Tree.leaf (depth, idx)
     | None -> Empty
   else
-    let pos = pos_solutions idx in
+    let (pos, cache) = pos_solutions idx cache in
     let childs =
-      List.fold_right (fun elem nodes ->
-          let child = find_n_combinations elem (depth + 1) max_depth in
+      List.fold_right ~f:(fun elem nodes ->
+          let child = find_n_combinations elem (depth + 1) max_depth cache in
           match child with
           | Node _ as inner ->
             inner::nodes
           | _ -> nodes
-        ) pos [] in
+        ) ~init:[] pos
+    in
     Node ((depth, idx), childs)
 
-
 let () =
-  (find_n_combinations (0, 2) 0 4)
+  (find_n_combinations (0, 2) 0 4 (Int_map.empty))
   |> Tree.paths
-  |> List.filter (fun ls -> (List.length ls) = 4)
-  |> List.iter (fun path ->
+  |> List.filter ~f:(fun ls -> (List.length ls) = 4)
+  |> List.iter ~f:(fun path ->
       print_string "Path >>\n";
       path
-      |> List.map (fun (_, (i, j)) -> pad_lock.(i).(j))
-      |> List.iter (function
+      |> List.map ~f:(fun (_, (i, j)) -> pad_lock.(i).(j))
+      |> List.iter ~f:(function
           | Some n -> Printf.printf "%d\n" n
           | None -> print_string "" )
     )
