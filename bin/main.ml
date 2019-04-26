@@ -14,12 +14,10 @@ let moves = [
   (-1, 2); (-1, -2);
 ]
 
-module Int_map = Map.Make (
-  struct
+module Int_map = Map.Make (struct
     type t = int * int
     include Tuple.Comparable (Int) (Int)
-  end
-  )
+  end)
 
 let pos_solutions ((i, j) as idx) (cache : (int * int) list Int_map.t) =
   match Int_map.find cache idx with
