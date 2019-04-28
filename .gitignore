@@ -2,3 +2,5 @@ _build
 .merlin
 *.log
 _esy
+node_modules
+*.install

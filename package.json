@@ -1,0 +1,17 @@
+{
+    "name": "padlock",
+    "version": "0.1.0",
+    "description": "OCaml workflow with Esy",
+    "license": "MIT",
+    "esy": {
+      "build": "dune build --profile release bin/main.exe"
+    },
+    "dependencies": {
+      "@opam/core": "*"
+    },
+    "devDependencies": {
+      "@opam/dune": "*",
+      "ocaml": "~4.6.0",
+      "@opam/merlin": "^3.0.3"
+    }
+  }

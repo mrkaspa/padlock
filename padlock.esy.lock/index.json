@@ -1,12 +1,16 @@
 {
-  "checksum": "3bc03896e8a92a75fdf09f704692ab8f",
-  "root": "padlock@link:./padlock.opam",
+  "checksum": "27c52209524a54835fdecea34e799ff1",
+  "root": "padlock@link-dev:./padlock.opam",
   "node": {
-    "padlock@link:./padlock.opam": {
-      "id": "padlock@link:./padlock.opam",
+    "padlock@link-dev:./padlock.opam": {
+      "id": "padlock@link-dev:./padlock.opam",
       "name": "padlock",
-      "version": "link:./padlock.opam",
-      "source": { "type": "link", "path": ".", "manifest": "padlock.opam" },
+      "version": "link-dev:./padlock.opam",
+      "source": {
+        "type": "link-dev",
+        "path": ".",
+        "manifest": "padlock.opam"
+      },
       "overrides": [],
       "dependencies": [
         "@opam/dune@opam:1.9.1@61bdaadf", "@opam/core@opam:v0.12.1@97745b8d",
