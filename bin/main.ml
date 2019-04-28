@@ -14,13 +14,13 @@ let moves = [
   (-1, 2); (-1, -2);
 ]
 
-module Int_map = Map.Make (struct
+module Tuple_map = Map.Make (struct
     type t = int * int
     include Tuple.Comparable (Int) (Int)
   end)
 
-let pos_solutions ((i, j) as idx) (cache : (int * int) list Int_map.t) =
-  match Int_map.find cache idx with
+let pos_solutions ((i, j) as idx) (cache : (int * int) list Tuple_map.t) =
+  match Tuple_map.find cache idx with
   | Some sols -> (sols, cache)
   | None ->
     let sols =
@@ -36,16 +36,16 @@ let pos_solutions ((i, j) as idx) (cache : (int * int) list Int_map.t) =
             ls
         ) ~init:[] moves
     in
-    (sols, Int_map.add_exn cache ~key:idx ~data:sols)
+    (sols, Tuple_map.add_exn cache ~key:idx ~data:sols)
 
-let rec find_n_combinations ((i, j) as idx) depth max_depth (cache : (int * int) list Int_map.t) =
+let rec find_n_combinations ((i, j) as idx) depth max_depth (cache : (int * int) list Tuple_map.t) =
   if depth > max_depth then
     match pad_lock.(i).(j) with
     | Some _ -> Tree.leaf (depth, idx)
     | None -> Empty
   else
     let (pos, cache) = pos_solutions idx cache in
-    let childs =
+    let children =
       List.fold_right ~f:(fun elem nodes ->
           let child = find_n_combinations elem (depth + 1) max_depth cache in
           match child with
@@ -54,10 +54,10 @@ let rec find_n_combinations ((i, j) as idx) depth max_depth (cache : (int * int)
           | _ -> nodes
         ) ~init:[] pos
     in
-    Node ((depth, idx), childs)
+    Tree.node (depth, idx) children
 
 let () =
-  (find_n_combinations (0, 2) 0 4 (Int_map.empty))
+  (find_n_combinations (0, 2) 0 4 (Tuple_map.empty))
   |> Tree.paths
   |> List.filter ~f:(fun ls -> (List.length ls) = 4)
   |> List.iter ~f:(fun path ->
