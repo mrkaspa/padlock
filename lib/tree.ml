@@ -20,7 +20,7 @@ let node n children = Node (n, children)
 
 (* [fold]: Fold function for trees. *)
 let rec fold f = function Empty -> raise Empty_tree
-                        | Node(a,lst) -> f a (List.map (fold f) lst)
+                        | Node(a, lst) -> f a (List.map (fold f) lst)
 
 (* [paths] : list of all paths from root node to other nodes in tree *)
 let paths t = fold

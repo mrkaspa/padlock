@@ -38,7 +38,7 @@ let pos_solutions ((i, j) as idx) (cache : (int * int) list Tuple_map.t) =
     in
     (sols, Tuple_map.add_exn cache ~key:idx ~data:sols)
 
-let rec find_n_combinations ((i, j) as idx) depth max_depth (cache : (int * int) list Tuple_map.t) =
+let rec find_n_combinations ((i, j) as idx) depth max_depth ~(cache : (int * int) list Tuple_map.t) =
   if depth > max_depth then
     match pad_lock.(i).(j) with
     | Some _ -> Tree.leaf (depth, idx)
@@ -47,7 +47,7 @@ let rec find_n_combinations ((i, j) as idx) depth max_depth (cache : (int * int)
     let (pos, cache) = pos_solutions idx cache in
     let children =
       List.fold_right ~f:(fun elem nodes ->
-          let child = find_n_combinations elem (depth + 1) max_depth cache in
+          let child = find_n_combinations elem (depth + 1) max_depth ~cache:cache in
           match child with
           | Node _ as inner ->
             inner::nodes
