@@ -1,0 +1,12 @@
+opam-version: "2.0"
+name: "padlock"
+version: "1.0.0"
+maintainer: "Michel Perez <michel.ingesoft@gmail.com>"
+authors: ["Michel Perez <michel.ingesoft@gmail.com>"]
+description: "Demo"
+license: ["ISC"]
+tags: []
+depends: [
+  "dune" {build}
+  "core" {>= "0.12.1"}
+]
